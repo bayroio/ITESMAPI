@@ -33,15 +33,14 @@ router.post('/', async (req: Request, res: Response) => {
     //Create the smart contract
     const profileDeploymentEvents = [];
     const address = process.env.ADDRESS || "";
-    console.log(address);
     const myContracts = await lspFactory.UniversalProfile.deploy({
-        controllerAddresses: ["0xd53D11516bbe5863028DCF5d636921786f142f45"], // Account addresses which will control the UP
+        controllerAddresses: [process.env.Address || ""], // Account addresses which will control the UP
         lsp3Profile: myLSP3MetaData,
     },
     {
         onDeployEvents: {
-            next: (deploymentEvent) => {
-                //console.log(deploymentEvent);
+           next: (deploymentEvent) => {
+                console.log(deploymentEvent);
                 profileDeploymentEvents.push(deploymentEvent);
             },
             error: (error) => {
