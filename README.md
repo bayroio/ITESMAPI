@@ -1,42 +1,24 @@
-# UP-NFT2.0
-Universal Profile + LSP7 + LSP 8
+//Install typescript
+npm i typescript -g
 
+//Install type node
+npm i ts-node -g
 
-## Steps
-### Init the project
-```
-npm init
-```
-Keep default values.
+//Install nodemon
+npm i nodemon - g
 
-### Install dependencies
-We install erc725.js and lsp-factory.js.
-```
+//Go to the folder and open the project
+code .
+
+//Install express
+npm i express cors dotenv multer
+
+//Install types
+npm i @types/express @types/cors @types/dotenv @types/multer -D
+
+//Install dependencies
 npm i @erc725/erc725.js @lukso/lsp-factory.js
-```
-
-We will also need Web3js to generate a wallet and create a provider:
-```
 npm i web3
-```
 
-### Install and set up TypeScript
-Install TypeScript and ts-node and dotenv:
-```
-npm i -D typescript ts-node dotenv
-```
-
-Init TypeScript:
-```
-npx tsc --init
-```
-
-Enable resolveJsonModule in tsconfig.json:
-```
-"resolveJsonModule": true
-```
-
-Copy .env file
-```
-cp .env.example ./src/.env
-```
+//Start the project
+npm run dev
