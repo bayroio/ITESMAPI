@@ -11,7 +11,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     //Create the Address
     const web3 = new Web3();
-    //const myEOA = web3.eth.accounts.create();
+    const myEOA = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY || "");
 
     //Connect to ganache
     const lspFactory = new LSPFactory(RPC_GANACHE, {
@@ -34,7 +34,7 @@ router.post('/', async (req: Request, res: Response) => {
     const profileDeploymentEvents = [];
     const address = process.env.ADDRESS || "";
     const myContracts = await lspFactory.UniversalProfile.deploy({
-        controllerAddresses: [process.env.Address || ""], // Account addresses which will control the UP
+        controllerAddresses: [myEOA.address], // Account addresses which will control the UP
         lsp3Profile: myLSP3MetaData,
     },
     {
@@ -45,6 +45,7 @@ router.post('/', async (req: Request, res: Response) => {
             },
             error: (error) => {
                 console.error(error);
+                res.send("Error");
             },
             complete: (contracts) => {
                 console.log('Universal Profile deployment completed');
@@ -55,8 +56,6 @@ router.post('/', async (req: Request, res: Response) => {
             },
         }
     });
-
-    res.send("Done");
 })
 
 export { router };
