@@ -38,6 +38,10 @@
 `npm i js-sha3`
 
 
+**Install ipfs**
+
+`npm i ipfs-core@0.12.0`
+
 
 **Install dependencies**
 
