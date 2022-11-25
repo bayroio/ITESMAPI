@@ -28,6 +28,17 @@
 `npm i @types/express @types/cors @types/dotenv @types/multer -D`
 
 
+**Install multer**
+
+`npm i multer`
+
+
+**Install hash**
+
+`npm i js-sha3`
+
+
+
 **Install dependencies**
 
 `npm i @erc725/erc725.js @lukso/lsp-factory.js`
