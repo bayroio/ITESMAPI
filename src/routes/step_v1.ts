@@ -43,7 +43,7 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     //get the hash and url profile image
     var hashprofile = keccak_256(files.profileimage[0].buffer || "");
     const profiletemp = {
-      path: `temp/${files.profileimage[0].originalname}`,
+      path: `${files.profileimage[0].originalname}`,
       content: files.profileimage[0].buffer
     }
     const urlprofile = await globalThis.ipfs.add(profiletemp);
@@ -53,7 +53,7 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     //get the hash and url background image
     var hashbackground = keccak_256(files.backgroundimage[0].buffer || "");
     const backgroundtemp = {
-      path: `temp/${files.backgroundimage[0].originalname}`,
+      path: `${files.backgroundimage[0].originalname}`,
       content: files.backgroundimage[0].buffer
     }
     const urlbackground = await globalThis.ipfs.add(backgroundtemp);
@@ -122,7 +122,7 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
         }
     });
 
-    res.send("hola");
+    //res.send("hola");
 })
 
 
