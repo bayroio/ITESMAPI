@@ -1,21 +1,22 @@
 import { Request, Response, Router } from "express";
+import { keccak_256 } from 'js-sha3';
+import { LSPFactory } from "@lukso/lsp-factory.js";
+import { RPC_GANACHE } from "./constants";
 import multer from 'multer';
 import Web3 from "web3";
 import * as IPFS from 'ipfs-core';
 import "dotenv/config";
-import { keccak_256 } from 'js-sha3';
-import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_ENDPOINT_L14, RPC_ENDPOINT_L16, RPC_ENDPOINT_MUMBAI, RPC_ENDPOINT_GOERLI, RPC_GANACHE } from "./constants";
+
+const router = Router();
+
 
 const upload = multer({
     storage: multer.memoryStorage(),
-//    limits: { fileSize: 1000000000, files: 2 },
+    // limits: { fileSize: 1000000000, files: 2 },
     fileFilter(req, file, cb) {
       cb(null, true);
     },
   });
-
-const router = Router();
 
 declare global {
     var ipfs: any
@@ -25,11 +26,6 @@ async function initGlobalIPFS() {
     globalThis.ipfs = await IPFS.create()
 };
 initGlobalIPFS()
-
-
-
-
-
 
 router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {
     // console.log(req.body.correo);

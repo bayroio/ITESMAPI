@@ -50,6 +50,12 @@
 `npm i web3`
 
 
+**Install Isomorphic**
+
+`npm i isomorphic-fetch`
+
+
+
 **Start the project**
 
 `npm run dev`

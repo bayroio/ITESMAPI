@@ -10,3 +10,6 @@ export const RPC_ENDPOINT_MUMBAI = "https://rpc-mumbai.maticvigil.com";
 export const RPC_ENDPOINT_GOERLI = "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
 
 export const RPC_GANACHE = "http://127.0.0.1:7545";
+
+export const IPFS_GATEWAY = "https://2eff.lukso.dev/ipfs/";
+ 
