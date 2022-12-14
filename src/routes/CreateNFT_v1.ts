@@ -55,11 +55,17 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
         controllerAddress: myEOA.address,
         name: 'MY Token',
         symbol: 'Test',
+
         digitalAssetMetadata: {
-            description: 'My NFT',
-            hashFunction: 'keccak256(bytes)',
-            hash: hashfilenft,            
-            url: urlfilenft.cid.toString(),
+            LSP4Metadata: {
+                description: "My Digital Asset",
+                assets: [{
+                    hashFunction: 'keccak256(bytes)',
+                    hash: hashfilenft,            
+                    url: urlfilenft.cid.toString(),
+                    fileType: ""
+                }]
+            },
         }
     },
     {
