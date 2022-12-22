@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_GANACHE } from "./constants";
+import { RPC_ENDPOINT_L16 } from "./constants";
 import multer from 'multer';
 import Web3 from "web3";
 import * as IPFS from 'ipfs-core';
@@ -61,19 +61,15 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     const myEOA = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY || "");
 
     //Connect to ganache
-    const lspFactory = new LSPFactory(RPC_GANACHE, {
+    const lspFactory = new LSPFactory(RPC_ENDPOINT_L16, {
         deployKey: process.env.PRIVATE_KEY, // Private key of the account which will deploy any smart contract,
-        chainId: 5777,
+        chainId: 2828,
     });
  
     //Create the MetaData
     const myLSP3MetaData = {
-        name: "Test",
-        description: "Personal Data",
-        correo: req.body.correo,
-        nombre: req.body.nombre,
-        primerapellido: req.body.primerapellido,
-        segundoapellido: req.body.segundoapellido,
+        name: `${req.body.nombre} ${req.body.primerapellido} ${req.body.segundoapellido}`,
+        description: `${req.body.correo}`,
         profileImage: [{
             width: 500,
             height: 500,
