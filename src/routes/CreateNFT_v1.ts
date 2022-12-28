@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_GANACHE } from "./constants";
+import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16 } from "./constants";
 import multer from 'multer';
 import Web3 from "web3";
 import * as IPFS from 'ipfs-core';
@@ -41,12 +41,24 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
     const web3 = new Web3();
     const myEOA = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY || "");
 
-    //Connect to ganache
-    const lspFactory = new LSPFactory(RPC_GANACHE, {
+    //Get the endpoint info
+    let endpoint = "";
+    let port = 0;
+    if (process.env.Endpoint == 'GANACHE') {
+        endpoint = RPC_GANACHE;
+        port = PORT_GANACHE;
+    }
+    else if (process.env.Endpoint == 'LUKSO_L16') {
+        endpoint = RPC_ENDPOINT_L16;
+        port = PORT_ENDPOINT_L16;
+    }
+
+    //Connect to endpoint
+    const lspFactory = new LSPFactory(endpoint, {
         deployKey: process.env.PRIVATE_KEY, // Private key of the account which will deploy any smart contract,
-        chainId: 5777,
+        chainId: port,
     });
-    
+     
 
     //Create the nft
     lspFactory.LSP4DigitalAssetMetadata
@@ -71,7 +83,7 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
     {
         onDeployEvents: {
             next: (deploymentEvent) => {
-                console.log(deploymentEvent);
+                //console.log(deploymentEvent);
                 deploymentEventsLSP8NFT2.push(deploymentEvent);
             },
             error: (error) => {

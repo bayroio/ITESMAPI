@@ -65,9 +65,6 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
         endpoint = RPC_ENDPOINT_L16;
         port = PORT_ENDPOINT_L16;
     }
-    console.log(endpoint);
-    console.log(port);
-
 
     //Connect to endpoint
     const lspFactory = new LSPFactory(endpoint, {
