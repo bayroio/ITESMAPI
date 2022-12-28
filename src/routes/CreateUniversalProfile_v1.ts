@@ -1,14 +1,13 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_ENDPOINT_L16 } from "./constants";
+import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16 } from "./constants";
 import multer from 'multer';
 import Web3 from "web3";
 import * as IPFS from 'ipfs-core';
 import "dotenv/config";
 
 const router = Router();
-
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -27,12 +26,7 @@ async function initGlobalIPFS() {
 };
 initGlobalIPFS()
 
-router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {
-    // console.log(req.body.correo);
-    // console.log(req.body.nombre);
-    // console.log(req.body.primerapellido);
-    // console.log(req.body.segundoapellido);
-    
+router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {    
     //get the files
     var files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
@@ -60,10 +54,25 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     const web3 = new Web3();
     const myEOA = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY || "");
 
-    //Connect to ganache
-    const lspFactory = new LSPFactory(RPC_ENDPOINT_L16, {
+    //Get the endpoint info
+    let endpoint = "";
+    let port = 0;
+    if (process.env.Endpoint == 'GANACHE') {
+        endpoint = RPC_GANACHE;
+        port = PORT_GANACHE;
+    }
+    else if (process.env.Endpoint == 'LUKSO_L16') {
+        endpoint = RPC_ENDPOINT_L16;
+        port = PORT_ENDPOINT_L16;
+    }
+    console.log(endpoint);
+    console.log(port);
+
+
+    //Connect to endpoint
+    const lspFactory = new LSPFactory(endpoint, {
         deployKey: process.env.PRIVATE_KEY, // Private key of the account which will deploy any smart contract,
-        chainId: 2828,
+        chainId: port,
     });
  
     //Create the MetaData
@@ -97,7 +106,7 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     {
         onDeployEvents: {
            next: (deploymentEvent) => {
-                console.log(deploymentEvent);
+                //console.log(deploymentEvent);
                 profileDeploymentEvents.push(deploymentEvent);
             },
             error: (error) => {

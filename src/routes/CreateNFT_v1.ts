@@ -34,8 +34,8 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
       content: files.filenft[0].buffer
     }
     const urlfilenft = await globalThis.ipfs.add(filenfttemp);
-    console.log(hashfilenft);
-    console.log(urlfilenft);
+    //console.log(hashfilenft);
+    //console.log(urlfilenft);
 
     //Get the Address
     const web3 = new Web3();
