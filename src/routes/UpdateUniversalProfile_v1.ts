@@ -30,6 +30,13 @@ declare global {
 router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {    
     let endpoint = "";
     let port = 0;
+    
+    //Validate apikey
+    let apikey = req.header(process.env.ApiKeyName || "");
+    console.log(apikey);
+    if (apikey != process.env.ApiKeyValue){
+      return res.status(401).json({ msg: 'Authorization denied' });
+    }
 
     //Get the files
     var files = req.files as { [fieldname: string]: Express.Multer.File[] };

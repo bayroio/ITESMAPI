@@ -39,6 +39,14 @@ async function fetchProfile(address: any) {
   }
   
 router.post('/', async (req: Request, res: Response) => {
+    
+  //Validate apikey
+    let apikey = req.header(process.env.ApiKeyName || "");
+    console.log(apikey);
+    if (apikey != process.env.ApiKeyValue){
+      return res.status(401).json({ msg: 'Authorization denied' });
+    }
+
     await fetchProfile(process.env.UNIVERSALPROFILE);
     res.send("Complete");
 })

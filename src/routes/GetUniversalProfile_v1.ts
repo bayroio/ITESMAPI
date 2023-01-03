@@ -13,6 +13,15 @@ router.post('/', async (req: Request, res: Response) => {
     let endpoint = "";
     let port = 0;
 
+
+    //Validate apikey
+    let apikey = req.header(process.env.ApiKeyName || "");
+    console.log(apikey);
+    if (apikey != process.env.ApiKeyValue){
+      return res.status(401).json({ msg: 'Authorization denied' });
+    }
+
+
     //Get the general info 
     const UniversalProfile = process.env.UNIVERSALPROFILE || "";
     if (process.env.Endpoint == 'GANACHE') {
