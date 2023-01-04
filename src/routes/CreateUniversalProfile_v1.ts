@@ -120,12 +120,10 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
                 console.log("Mi UP Address", contracts.LSP0ERC725Account?.address);
                 console.log(contracts);
                 console.log("-----------------------------------------------");
-                res.send(`Mi UP Address ${contracts.LSP0ERC725Account?.address}`)
+                res.send(`${contracts.LSP0ERC725Account?.address}`)
             },
         }
     });
-
-    //res.send("hola");
 })
 
 
