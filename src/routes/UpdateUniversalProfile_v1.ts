@@ -68,7 +68,7 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     }
     const web3 = new Web3(endpoint);
     const PrivateKey = process.env.PRIVATE_KEY || "";
-    const address_universalprofile = process.env.UNIVERSALPROFILE || "";
+    const address_universalprofile = req.body.address;
     const myEOA = web3.eth.accounts.wallet.add(PrivateKey);
 
     //Create the MetaData
