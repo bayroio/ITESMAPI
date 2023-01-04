@@ -3,27 +3,31 @@ import { ERC725 } from '@erc725/erc725.js';
 import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16, IPFS_GATEWAY } from "./constants";
 import erc725schema from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
 import Web3 from "web3";
+import multer from 'multer';
 
 
 const router = Router();
 
+const upload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter(req, file, cb) {
+    cb(null, true);
+  },
+});
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', upload.fields([]), async (req: Request, res: Response) => {
   try {
     let endpoint = "";
     let port = 0;
 
-
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
-    console.log(apikey);
     if (apikey != process.env.ApiKeyValue){
       return res.status(401).json({ msg: 'Authorization denied' });
     }
 
-
     //Get the general info 
-    const UniversalProfile = process.env.UNIVERSALPROFILE || "";
+    const UniversalProfile = req.body.address;
     if (process.env.Endpoint == 'GANACHE') {
       endpoint = RPC_GANACHE;
       port = PORT_GANACHE;
@@ -59,7 +63,8 @@ router.post('/', async (req: Request, res: Response) => {
     // console.log("Profile image: " + IPFS_GATEWAY + "/" + result[1].value.LSP3Profile.profileImage[0].url);
   } 
   catch (error) {
-    return console.log('This is not an ERC725 Contract');
+    console.log('This is not an ERC725 Contract');
+    res.send('This is not an ERC725 Contract');
   }
 })
 

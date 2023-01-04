@@ -11,7 +11,6 @@ const router = Router();
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    // limits: { fileSize: 1000000000, files: 2 },
     fileFilter(req, file, cb) {
       cb(null, true);
     },
@@ -29,7 +28,6 @@ initGlobalIPFS()
 router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {    
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
-    console.log(apikey);
     if (apikey != process.env.ApiKeyValue){
       return res.status(401).json({ msg: 'Authorization denied' });
     }
