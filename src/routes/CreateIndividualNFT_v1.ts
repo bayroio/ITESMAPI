@@ -71,7 +71,7 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
     }
 
     //Create the NFT
-    const result_CreateNFT = await CreateNFT(endpoint, port, PrivateKey, myEOA.address, hashfilenft, urlfilenft);
+    const result_CreateNFT = await CreateNFT(endpoint, port, PrivateKey, myEOA.address, hashfilenft, urlfilenft, req.body.name || "", req.body.description || "");
     if (result_CreateNFT[0] === 'Error'){
         res.send("Error creating NFT, please try again later");
         return;
@@ -97,7 +97,7 @@ async function GetNFTInfo(endpoint: string, ipfs: string, UniversalProfile: stri
         const config = { ipfsGateway: ipfs };
     
         const profile = new ERC725(erc725schema, UniversalProfile, provider, config);
-        const result = JSON.parse(JSON.stringify(await profile.fetchData("LSP5ReceivedAssets[]")));
+        const result = JSON.parse(JSON.stringify(await profile.fetchData("LSP12IssuedAssets[]")));
         //console.log(result);
     
 
@@ -109,7 +109,7 @@ async function GetNFTInfo(endpoint: string, ipfs: string, UniversalProfile: stri
     }
 }
 
-async function CreateNFT(endpoint: string, port: number, PrivateKey: string, address: string, hashfilenft: string, urlfilenft: any): Promise<[string, string]> {
+async function CreateNFT(endpoint: string, port: number, PrivateKey: string, address: string, hashfilenft: string, urlfilenft: any, namenft: string, descriptionnft: string): Promise<[string, string]> {
     try{
         let address_nft = "";
 
@@ -124,12 +124,12 @@ async function CreateNFT(endpoint: string, port: number, PrivateKey: string, add
         const deploymentEventsLSP8NFT2 = [];
         const myLSP8NFT2 = await lspFactory.LSP8IdentifiableDigitalAsset.deploy({
             controllerAddress: address,
-            name: 'MY Token',
-            symbol: 'Test',
+            name: namenft,
+            symbol: 'NFT',
 
             digitalAssetMetadata: {
                 LSP4Metadata: {
-                    description: "My Digital Asset",
+                    description: descriptionnft,
                     assets: [{
                         hashFunction: 'keccak256(bytes)',
                         hash: hashfilenft,            
@@ -190,12 +190,12 @@ async function UpdateProfile(ipfs: string, endpoint: string, address: string, ad
         //Set the schema
         const schema = [
             {
-                "name": "LSP5ReceivedAssets[]",
-                "key": "0x6460ee3c0aac563ccbf76d6e1d07bada78e3a9514e6382b736ed3f478ab7b90b",
+                "name": "LSP12IssuedAssets[]",
+                "key": "0x7c8c3416d6cda87cd42c71ea1843df28ac4850354f988d55ee2eaa47b6dc05cd",
                 "keyType": "Array",
                 "valueType": "address",
                 "valueContent": "Address"
-            },
+            }
         ];
      
         //Get the profile
@@ -203,7 +203,7 @@ async function UpdateProfile(ipfs: string, endpoint: string, address: string, ad
 
         //Update profile in LSP5ReceivedAssets
         const encodedData = profile.encodeData({
-            keyName: 'LSP5ReceivedAssets[]',
+            keyName: 'LSP12IssuedAssets[]',
             value: NFT_array,
         }, schema);
 
