@@ -52,7 +52,7 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
     //Get the general info Private Key, Address, Endpoint and Port
     const web3 = new Web3();
     const PrivateKey = process.env.PRIVATE_KEY || "";
-    const UniversalProfile = process.env.UNIVERSALPROFILE || "";
+    const UniversalProfile = req.body.address;
     const myEOA = web3.eth.accounts.wallet.add(PrivateKey);
     if (process.env.Endpoint == 'GANACHE') {
         endpoint = RPC_GANACHE;
@@ -87,7 +87,7 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
         return;
     }
 
-    res.send("NFT Complete")
+    res.send(result_CreateNFT[1])
 })
 
 async function GetNFTInfo(endpoint: string, ipfs: string, UniversalProfile: string): Promise<[string, string[]]>{
