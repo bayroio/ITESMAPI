@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { ERC725 } from '@erc725/erc725.js';
-import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16, IPFS_GATEWAY } from "./constants";
+import { IPFS_GATEWAY } from "./constants";
 import erc725schema from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
 import Web3 from "web3";
 import multer from 'multer';
@@ -17,8 +17,6 @@ const upload = multer({
 
 router.post('/', upload.fields([]), async (req: Request, res: Response) => {
   try {
-    let endpoint = "";
-    let port = 0;
 
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
@@ -28,14 +26,9 @@ router.post('/', upload.fields([]), async (req: Request, res: Response) => {
 
     //Get the general info 
     const UniversalProfile = req.body.address;
-    if (process.env.Endpoint == 'GANACHE') {
-      endpoint = RPC_GANACHE;
-      port = PORT_GANACHE;
-    }
-    else if (process.env.Endpoint == 'LUKSO_L16') {
-      endpoint = RPC_ENDPOINT_L16;
-      port = PORT_ENDPOINT_L16;
-    }
+    let endpoint = process.env.RPC_ENDPOINT || "";
+    let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
+
 
     // Parameters for ERC725 Instance
     const provider = new Web3.providers.HttpProvider(endpoint);

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 const { ERC725 } = require("@erc725/erc725.js");
-import { RPC_ENDPOINT_L16, IPFS_GATEWAY, RPC_GANACHE } from "./constants";
+import { IPFS_GATEWAY } from "./constants";
 import erc725schema from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
 
 import Web3 from "web3";
@@ -10,14 +10,17 @@ import type { AbiItem } from 'web3-utils';
 
 const router = Router();
 
-// Parameters for ERC725 Instance
-const provider = new Web3.providers.HttpProvider(RPC_ENDPOINT_L16);
-const config = { ipfsGateway: IPFS_GATEWAY };
-
 async function fetchProfile(address: any) {
     try {
 
-      const web3 = new Web3(RPC_GANACHE);
+      //Get the endpoint info
+      let endpoint = process.env.RPC_ENDPOINT || "";
+      let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
+
+      // Parameters for ERC725 Instance
+      const provider = new Web3.providers.HttpProvider(endpoint);
+      const config = { ipfsGateway: IPFS_GATEWAY };
+      const web3 = new Web3(endpoint);
 
       //get key manager
       const myUP = new web3.eth.Contract(UniversalProfile.abi as unknown as AbiItem [], address);
@@ -68,6 +71,8 @@ async function fetchProfile(address: any) {
   
 router.post('/', async (req: Request, res: Response) => {
 
+    const UniversalProfile = req.body.address;
+
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
     console.log(apikey);
@@ -75,7 +80,7 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Authorization denied' });
     }
 
-    const profileData = await fetchProfile(process.env.UNIVERSALPROFILE);
+    const profileData = await fetchProfile(UniversalProfile);
     res.send("Complete");
 })
 

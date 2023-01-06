@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16, IPFS_GATEWAY } from "./constants";
+import { IPFS_GATEWAY } from "./constants";
 const { ERC725 } = require("@erc725/erc725.js");
 import erc725schema from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
 import UniversalProfile from '@lukso/lsp-smart-contracts/artifacts/UniversalProfile.json';
@@ -28,9 +28,7 @@ declare global {
 }
 
 router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: 'backgroundimage', maxCount: 1 }]), async (req: Request, res: Response) => {    
-    let endpoint = "";
-    let port = 0;
-    
+
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
     console.log(apikey);
@@ -57,15 +55,10 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     }
     const urlbackground = await globalThis.ipfs.add(backgroundtemp);
 
-    //Get the general info Private Key, Address, Endpoint and Port
-    if (process.env.Endpoint == 'GANACHE') {
-        endpoint = RPC_GANACHE;
-        port = PORT_GANACHE;
-    }
-    else if (process.env.Endpoint == 'LUKSO_L16') {
-        endpoint = RPC_ENDPOINT_L16;
-        port = PORT_ENDPOINT_L16;
-    }
+    //Get the endpoint info
+    let endpoint = process.env.RPC_ENDPOINT || "";
+    let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
+
     const web3 = new Web3(endpoint);
     const PrivateKey = process.env.PRIVATE_KEY || "";
     const address_universalprofile = req.body.address;

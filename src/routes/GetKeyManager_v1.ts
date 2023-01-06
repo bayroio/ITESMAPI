@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import Web3 from "web3";
 import UniversalProfile from '@lukso/lsp-smart-contracts/artifacts/UniversalProfile.json';
 import KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
-import { RPC_GANACHE, RPC_ENDPOINT_L16 } from "./constants";
 import type { AbiItem } from 'web3-utils';
 
 const router = Router();
@@ -10,13 +9,9 @@ const router = Router();
 async function fetchProfile(address: any) {
 
     //Get the endpoint info
-    let endpoint = "";
-    if (process.env.Endpoint == 'GANACHE') {
-        endpoint = RPC_GANACHE;
-    }
-    else if (process.env.Endpoint == 'LUKSO_L16') {
-        endpoint = RPC_ENDPOINT_L16;
-    }
+    let endpoint = process.env.RPC_ENDPOINT || "";
+    let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
+
   
     const web3 = new Web3(endpoint);
 
@@ -39,6 +34,8 @@ async function fetchProfile(address: any) {
   }
   
 router.post('/', async (req: Request, res: Response) => {
+
+  const UniversalProfile = req.body.address;
     
   //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
@@ -47,7 +44,7 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(401).json({ msg: 'Authorization denied' });
     }
 
-    await fetchProfile(process.env.UNIVERSALPROFILE);
+    await fetchProfile(UniversalProfile);
     res.send("Complete");
 })
 

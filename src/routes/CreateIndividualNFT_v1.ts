@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16, IPFS_GATEWAY } from "./constants";
+import { IPFS_GATEWAY } from "./constants";
 import UniversalProfile from '@lukso/lsp-smart-contracts/artifacts/UniversalProfile.json';
 import KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
 import type { AbiItem } from 'web3-utils';
@@ -28,8 +28,6 @@ declare global {
 }
 
 router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: Request, res: Response) => {
-    let endpoint = "";
-    let port = 0;
 
     //Validate apikey
     let apikey = req.header(process.env.ApiKeyName || "");
@@ -54,14 +52,9 @@ router.post('/', upload.fields([{ name: 'filenft', maxCount: 1 }]), async (req: 
     const PrivateKey = process.env.PRIVATE_KEY || "";
     const UniversalProfile = req.body.address;
     const myEOA = web3.eth.accounts.wallet.add(PrivateKey);
-    if (process.env.Endpoint == 'GANACHE') {
-        endpoint = RPC_GANACHE;
-        port = PORT_GANACHE;
-    }
-    else if (process.env.Endpoint == 'LUKSO_L16') {
-        endpoint = RPC_ENDPOINT_L16;
-        port = PORT_ENDPOINT_L16;
-    }
+    let endpoint = process.env.RPC_ENDPOINT || "";
+    let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
+
 
     //Get the NFT info
     const result_GetNFTInfo = await GetNFTInfo(endpoint, IPFS_GATEWAY, UniversalProfile);

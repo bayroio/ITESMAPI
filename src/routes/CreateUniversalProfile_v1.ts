@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
 import { keccak_256 } from 'js-sha3';
 import { LSPFactory } from "@lukso/lsp-factory.js";
-import { RPC_GANACHE, PORT_GANACHE, RPC_ENDPOINT_L16, PORT_ENDPOINT_L16 } from "./constants";
 import multer from 'multer';
 import Web3 from "web3";
 import * as IPFS from 'ipfs-core';
@@ -60,16 +59,8 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
     const myEOA = web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY || "");
 
     //Get the endpoint info
-    let endpoint = "";
-    let port = 0;
-    if (process.env.Endpoint == 'GANACHE') {
-        endpoint = RPC_GANACHE;
-        port = PORT_GANACHE;
-    }
-    else if (process.env.Endpoint == 'LUKSO_L16') {
-        endpoint = RPC_ENDPOINT_L16;
-        port = PORT_ENDPOINT_L16;
-    }
+    let endpoint = process.env.RPC_ENDPOINT || "";
+    let port: number = (process.env.RPC_PORT !== null && process.env.RPC_PORT !== undefined) ? Number(process.env.RPC_PORT) : 0;
 
     //Connect to endpoint
     const lspFactory = new LSPFactory(endpoint, {
@@ -100,7 +91,6 @@ router.post('/', upload.fields([{ name: 'profileimage', maxCount: 1 }, { name: '
 
     //Create the smart contract
     const profileDeploymentEvents = [];
-    const address = process.env.ADDRESS || "";
     const myContracts = await lspFactory.UniversalProfile.deploy({
         controllerAddresses: [myEOA.address], // Account addresses which will control the UP
         lsp3Profile: myLSP3MetaData,
